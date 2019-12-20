@@ -12,7 +12,7 @@ export default class App extends React.Component {
     }
 
     sendDataToServer(lat, long, intensity) {
-      fetch('https://localhost/endpoint/', {
+      fetch('http://iitmandi.co.in:6996/api/post', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -20,8 +20,8 @@ export default class App extends React.Component {
         },
         body: JSON.stringify({
           lat: lat,
-          long: long,
-          intensity: intensity
+          lon: long,
+          yacc: intensity
         }),
       });      
     }
