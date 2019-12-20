@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Acc from './components/acc.js';
 
 export default class App extends React.Component {
     constructor(){
@@ -12,7 +13,7 @@ export default class App extends React.Component {
     }
 
     sendDataToServer(lat, long, intensity) {
-      fetch('http://iitmandi.co.in:6996/api/post', {
+      fetch('http://sntc.iitmandi.ac.in:8585/api/post', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -27,6 +28,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount(){
+      // this.sendDataToServer(32,32,54);
         let geoOptions = {
             enableHighAccuracy: true,
             timeOut: 20000,
@@ -65,6 +67,7 @@ export default class App extends React.Component {
                     Longitude: ${this.state.where.lng}`
                     }</Text>
                 )}
+                <Acc/>
             </View>
         );
     }
