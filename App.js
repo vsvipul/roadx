@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-
+import Notif from './notif';
 
 export default class App extends React.Component {
     constructor(){
@@ -43,8 +43,8 @@ export default class App extends React.Component {
 
     componentDidMount(){
         this.setState({ready:false, error: null });
-        Accelerometer.setUpdateInterval(500);
         this.getLocationAsync();
+        Accelerometer.setUpdateInterval(500);
         Accelerometer.addListener(accelerometerData => {
             this.setState({
                 ready2 : true,
@@ -76,25 +76,10 @@ export default class App extends React.Component {
         });
     }
     
-    geoFailure = (err) => {
-      alert('Please turn on GPS');
-      this.setState({error: err.message});
-    }
     render() {
         return (
             <View style={styles.container}>
-                { !this.state.ready && (
-                <Text style={styles.big}>Using Geolocation in React Native.</Text>
-                )}
-                { this.state.error && (
-                <Text style={styles.big}>{this.state.error}</Text>
-                )}
-                { this.state.ready && (
-                    <Text style={styles.big}>{
-                    `Latitude: ${this.state.where.lat}
-                    Longitude: ${this.state.where.lng}`
-                    }</Text>
-                )}
+                <Notif />
             </View>
         );
     }
