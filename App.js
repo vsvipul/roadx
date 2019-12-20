@@ -1,12 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Acc from './components/acc.js';
+import { Accelerometer } from 'expo-sensors';
 
 export default class App extends React.Component {
     constructor(){
         super();
         this.state = {
             ready: false,
+            ready2: false,
+            intensity : null,
             where: {lat:null, lng:null},
             error: null
         }
@@ -27,6 +29,15 @@ export default class App extends React.Component {
       });      
     }
 
+    send2server = () => {
+        if(this.state.ready && this.state.ready2){
+            if(this.state.intensity > 1.5 || this.state.intensity < 0.5){
+                // this.sendDataToServer(this.state.where.lat, this.state.where.lng, this.state.intensity);
+                console.log(this.state.where.lat, this.state.where.lng, this.state.intensity);
+            }
+        }
+    }
+
     componentDidMount(){
       // this.sendDataToServer(32,32,54);
         let geoOptions = {
@@ -36,7 +47,15 @@ export default class App extends React.Component {
             distanceFilter: 0
         };
         this.setState({ready:false, error: null });
-        navigator.geolocation.watchPosition(this.geoSuccess, this.geoFailure, geoOptions);  
+        Accelerometer.setUpdateInterval(500);
+        navigator.geolocation.watchPosition(this.geoSuccess, this.geoFailure, geoOptions);
+        Accelerometer.addListener(accelerometerData => {
+            this.setState({
+                ready2 : true,
+                intensity : accelerometerData.y
+            })
+            this.send2server();
+        });
     }
 
     geoSuccess = (position) => {
@@ -67,7 +86,6 @@ export default class App extends React.Component {
                     Longitude: ${this.state.where.lng}`
                     }</Text>
                 )}
-                <Acc/>
             </View>
         );
     }
