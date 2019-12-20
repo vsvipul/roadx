@@ -11,6 +11,21 @@ export default class App extends React.Component {
         }
     }
 
+    sendDataToServer(lat, long, intensity) {
+      fetch('https://localhost/endpoint/', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lat: lat,
+          long: long,
+          intensity: intensity
+        }),
+      });      
+    }
+
     componentDidMount(){
         let geoOptions = {
             enableHighAccuracy: true,
