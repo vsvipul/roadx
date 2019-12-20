@@ -1,6 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
+
 
 export default class App extends React.Component {
     constructor(){
@@ -30,7 +33,6 @@ export default class App extends React.Component {
     }
 
     send2server = () => {
-      // console.log(this.state);
         if(this.state.ready && this.state.ready2){
             if ((this.state.intensity > 1.5) || (this.state.intensity < 0.5)) {
                 this.sendDataToServer(this.state.where.lat, this.state.where.lng, this.state.intensity);
@@ -40,18 +42,10 @@ export default class App extends React.Component {
     }
 
     componentDidMount(){
-      // this.sendDataToServer(32,32,54);
-        let geoOptions = {
-            enableHighAccuracy: true,
-            timeOut: 20000,
-            maximumAge: 3000,
-            distanceFilter: 0
-        };
         this.setState({ready:false, error: null });
         Accelerometer.setUpdateInterval(500);
-        navigator.geolocation.watchPosition(this.geoSuccess, this.geoFailure, geoOptions);
+        this.getLocationAsync();
         Accelerometer.addListener(accelerometerData => {
-          // console.log(accelerometerData);
             this.setState({
                 ready2 : true,
                 intensity : accelerometerData.z
@@ -60,9 +54,22 @@ export default class App extends React.Component {
         });
     }
 
+    getLocationAsync = async () => {
+      let geoOptions = {
+          accuracy: 6,
+          timeInterval: 1000
+      };
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== 'granted') {
+        this.setState({
+          errorMessage: 'Permission to access location was denied',
+        });
+      }
+
+      Location.watchPositionAsync(geoOptions, this.geoSuccess);
+    };
+
     geoSuccess = (position) => {
-        // console.log(position.coords);
-        
         this.setState({
             ready:true,
             where: {lat: position.coords.latitude,lng:position.coords.longitude }
