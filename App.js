@@ -30,9 +30,10 @@ export default class App extends React.Component {
     }
 
     send2server = () => {
+      // console.log(this.state);
         if(this.state.ready && this.state.ready2){
-            if(this.state.intensity > 1.5 || this.state.intensity < 0.5){
-                // this.sendDataToServer(this.state.where.lat, this.state.where.lng, this.state.intensity);
+            if ((this.state.intensity > 1.5) || (this.state.intensity < 0.5)) {
+                this.sendDataToServer(this.state.where.lat, this.state.where.lng, this.state.intensity);
                 console.log(this.state.where.lat, this.state.where.lng, this.state.intensity);
             }
         }
@@ -50,16 +51,17 @@ export default class App extends React.Component {
         Accelerometer.setUpdateInterval(500);
         navigator.geolocation.watchPosition(this.geoSuccess, this.geoFailure, geoOptions);
         Accelerometer.addListener(accelerometerData => {
+          // console.log(accelerometerData);
             this.setState({
                 ready2 : true,
-                intensity : accelerometerData.y
+                intensity : accelerometerData.z
             })
             this.send2server();
         });
     }
 
     geoSuccess = (position) => {
-        console.log(position.coords);
+        // console.log(position.coords);
         
         this.setState({
             ready:true,
