@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+{% block body %}
+<style>
+  .leaflet-control-container { position: absolute; bottom: 9%; left: 1%}
+  .mq-logo-control {display: none}
+  .navbar {background: #000; opacity: 70%; color: #ffffff}
+  #gaga{ position: absolute; top: 20%; right: 0%; width: 25%; padding : 2% ; z-index: 999; background: #000; opacity: 70%; color: #ffffff}
+</style>
+<div class="page-header clear-filter" filter-color="orange">
+  <div class="page-header-image" data-parallax="true" style="background-image: ;">
+  </div>
+  <div class="rellax-header rellax-header-buildings" data-rellax-speed="0">
+    <div id='map' style='width: 100%; height:100%;'></div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    window.onload = function() {
+        function httpGetAsync(theUrl, callback)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() { 
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+                    callback(xmlHttp.response);
+                }
+            }
+            xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+            xmlHttp.send(null);
+        }
+        var art = Array();
+        httpGetAsync('http://sntc.iitmandi.ac.in:8585/api/all', function(response) {
+            var obj = JSON.parse(response);
+            heatlist = [];
+            for (i = 0; i < obj.length; i++) {
+              heatlist.push([obj[i].lat,obj[i].lon]);
+            }            
+            var popup = L.popup();
+            var geolocationMap = L.map('map', {
+                layers: MQ.mapLayer(),
+                center: [29.864649500000002 , 77.89387839999999],
+                zoom: 15
+            });
+            // L.control.zoom({ position: 'bottomleft' }).addTo(geolocationMap);
+            var heat = L.heatLayer(heatlist, {radius: 25}).addTo(geolocationMap);
+            
+            function geolocationErrorOccurred(geolocationSupported, popup, latLng) {
+                popup.setLatLng(latLng);
+                popup.setContent(geolocationSupported ?
+                        '<b>Error:</b> The Geolocation service failed.' :
+                        '<b>Error:</b> This browser doesn\'t support geolocation.');
+                popup.openOn(geolocationMap);
+            }
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latLng = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    popup.setLatLng(latLng);
+                    // popup.setContent('This is your current location');
+                    // popup.openOn(geolocationMap);
+
+                    geolocationMap.setView(latLng);
+                    
+                }, function() {
+                    geolocationErrorOccurred(true, popup, geolocationMap.getCenter());
+                });
+            } else {
+                //No browser support geolocation service
+                geolocationErrorOccurred(false, popup, geolocationMap.getCenter());
+            }
+            geolocationMap.on({
+                movestart: function () { draw = false; },
+                moveend:   function () { draw = true; },
+                mousemove: function (e) {
+                    if (draw) {
+                        blow = {"lat": e.latlng.lat,"lon": e.latlng.lng,"yacc": 1.0};
+                        art.push(blow);
+                        heat.addLatLng(e.latlng);
+                        console.log(JSON.stringify(art));
+                    }
+                }
+            })
+            
+        });
+    }
+</script>
+
+{% endblock %}
