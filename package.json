@@ -9,12 +9,19 @@
   },
   "dependencies": {
     "expo": "~36.0.0",
+    "expo-camera": "^8.0.0",
     "expo-sensors": "^8.0.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
+<<<<<<< HEAD
     "react-native-web": "~0.11.7",
     "expo-permissions": "~8.0.0"
+=======
+    "react-native-maps": "^0.26.1",
+    "react-native-vector-icons": "^6.6.0",
+    "react-native-web": "~0.11.7"
+>>>>>>> add camera button
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",
