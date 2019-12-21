@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Dimensions, Button, TouchableOpacity, TextInput
 import { Accelerometer } from 'expo-sensors';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import MapView from 'react-native-maps';
+import MapView, { Polyline } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
 import Modal from 'react-native-modal';
@@ -269,7 +269,24 @@ export default class MapScreen extends React.Component {
                 </View>
               </Modal>
               </View>
-              <MapView style={styles.mapStyle} />
+              <MapView 
+                style={styles.mapStyle} 
+                showsUserLocation={true} 
+                followsUserLocation= {true}
+                initialRegion= {{
+                  latitude: 29.854,
+                  longitude: 77.893,
+                  latitudeDelta: .07,
+                  longitudeDelta: .07
+                }}
+              >
+              <Polyline
+                coordinates= {coordinates}
+                strokeWidth = {10}
+                strokeColor="#00a8ff"
+                lineCap="around"
+              />
+              </MapView>
               <View
                   style={{
                       position: 'absolute',//use absolute position to show button on top of the map
@@ -302,6 +319,16 @@ export default class MapScreen extends React.Component {
         );
     }
 }
+
+// const point = [[29.85, 77.89],[29.29, 77.19],[29.81, 77.90],[29.2, 77.21],[29.4, 77.55]]; 
+const point = []; 
+let coordinates = point.map((x)=> {
+  return {
+    latitude: x[0],
+    longitude: x[1]
+  }
+});
+console.log(coordinates);
 
 const styles = StyleSheet.create({
   container: {
